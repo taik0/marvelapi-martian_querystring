@@ -1,12 +1,12 @@
 package querystring
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"net/http"
-  "time"
-  "strconv"
-  "crypto/md5"
-  "encoding/hex"
+	"strconv"
+	"time"
 
 	"github.com/google/martian"
 	"github.com/google/martian/parse"
@@ -23,26 +23,26 @@ type MarvelModifier struct {
 type MarvelModifierJSON struct {
 	Public  string               `json:"public"`
 	Private string               `json:"private"`
-	Scope []parse.ModifierType `json:"scope"`
+	Scope   []parse.ModifierType `json:"scope"`
 }
 
 // ModifyRequest modifies the query string of the request with the given key and value.
 func (m *MarvelModifier) ModifyRequest(req *http.Request) error {
 	query := req.URL.Query()
-  ts := strconv.FormatInt(time.Now().Unix(), 10)
-  hash := GetMD5Hash(ts + m.private + m.public)
-  query.Set("apikey", m.public)
-  query.Set("ts", ts)
-  query.Set("hash", hash)
+	ts := strconv.FormatInt(time.Now().Unix(), 10)
+	hash := GetMD5Hash(ts + m.private + m.public)
+	query.Set("apikey", m.public)
+	query.Set("ts", ts)
+	query.Set("hash", hash)
 	req.URL.RawQuery = query.Encode()
 
 	return nil
 }
 
 func GetMD5Hash(text string) string {
-    hasher := md5.New()
-    hasher.Write([]byte(text))
-    return hex.EncodeToString(hasher.Sum(nil))
+	hasher := md5.New()
+	hasher.Write([]byte(text))
+	return hex.EncodeToString(hasher.Sum(nil))
 }
 
 // NewModifier returns a request modifier that will set the query string
@@ -50,7 +50,7 @@ func GetMD5Hash(text string) string {
 // values will be overwritten.
 func MarvelNewModifier(public, private string) martian.RequestModifier {
 	return &MarvelModifier{
-		public:   public,
+		public:  public,
 		private: private,
 	}
 }
