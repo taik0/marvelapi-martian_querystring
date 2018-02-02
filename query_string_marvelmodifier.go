@@ -16,10 +16,12 @@ func init() {
 	parse.Register("querystring.MarvelModifier", marvelModifierFromJSON)
 }
 
+// MarvelModifier contains the private and public Marvel API key
 type MarvelModifier struct {
 	public, private string
 }
 
+// MarvelModifierJSON to Unmarshal the JSON configuration
 type MarvelModifierJSON struct {
 	Public  string               `json:"public"`
 	Private string               `json:"private"`
@@ -39,13 +41,14 @@ func (m *MarvelModifier) ModifyRequest(req *http.Request) error {
 	return nil
 }
 
+// GetMD5Hash returns the md5 hash from a string
 func GetMD5Hash(text string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(text))
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
-// NewModifier returns a request modifier that will set the query string
+// MarvelNewModifier returns a request modifier that will set the query string
 // at key with the given value. If the query string key already exists all
 // values will be overwritten.
 func MarvelNewModifier(public, private string) martian.RequestModifier {
@@ -55,7 +58,7 @@ func MarvelNewModifier(public, private string) martian.RequestModifier {
 	}
 }
 
-// modifierFromJSON takes a JSON message as a byte slice and returns
+// marvelModifierFromJSON takes a JSON message as a byte slice and returns
 // a querystring.modifier and an error.
 //
 // Example JSON:
